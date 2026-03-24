@@ -18,10 +18,24 @@ It is designed to be the calculation engine behind HVAC design tools, web apps, 
 
 ## Installation
 
-*(Note: This package is not yet on PyPI. You can install it locally or drop the `hvac_pressure` folder into your project.)*
+### From PyPI (recommended)
 
 ```bash
-pip install .
+pip install hvac_pressure
+```
+
+### From GitHub (latest development version)
+
+```bash
+pip install git+https://github.com/JeremySimonneau/hvac-fitting-loss.git
+```
+
+### In Replit
+
+Add the following line to your `requirements.txt` file:
+
+```
+hvac_pressure
 ```
 
 ## Quick Start
