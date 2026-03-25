@@ -24,6 +24,7 @@ velocity unless noted otherwise (bellmouth entries use downstream velocity).
 
 # CD3-1: Elbow, Die Stamped, 90°, r/D = 1.5
 # C varies with duct diameter (mm). Fixed r/D = 1.5.
+# Source: ASHRAE 2009 Handbook Fundamentals, p.21.26
 CD3_1 = {
     "description": "Round Elbow — Die Stamped 90° (r/D = 1.5)",
     "shape": "round",
@@ -34,11 +35,12 @@ CD3_1 = {
         {"name": "D_mm", "label": "Diameter", "unit": "mm",
          "values": [75, 100, 125, 150, 180, 200, 230, 250]},
     ],
-    "c": [0.45, 0.34, 0.27, 0.24, 0.21, 0.20, 0.19, 0.18],
+    "c": [0.30, 0.21, 0.16, 0.14, 0.12, 0.11, 0.11, 0.11],
     "notes": "Fixed r/D = 1.5. C decreases with increasing diameter.",
 }
 
 # CD3-5: Elbow, Pleated, 90°, r/D = 1.5
+# Source: ASHRAE 2009 Handbook Fundamentals, p.21.26
 CD3_5 = {
     "description": "Round Elbow — Pleated 90° (r/D = 1.5)",
     "shape": "round",
@@ -47,13 +49,14 @@ CD3_5 = {
     "ref_velocity": "upstream",
     "params": [
         {"name": "D_mm", "label": "Diameter", "unit": "mm",
-         "values": [75, 100, 125, 150, 180, 200, 230, 250]},
+         "values": [100, 150, 200, 250, 300, 350, 400]},
     ],
-    "c": [0.57, 0.43, 0.34, 0.30, 0.26, 0.25, 0.23, 0.22],
+    "c": [0.57, 0.43, 0.34, 0.28, 0.26, 0.25, 0.25],
     "notes": "Fixed r/D = 1.5. Higher loss than die-stamped due to pleating.",
 }
 
 # CD3-9: Elbow, 5-Gore, 90°, r/D = 1.5
+# Source: ASHRAE 2009 Handbook Fundamentals, p.21.27
 CD3_9 = {
     "description": "Round Elbow — 5-Gore 90° (r/D = 1.5)",
     "shape": "round",
@@ -62,14 +65,15 @@ CD3_9 = {
     "ref_velocity": "upstream",
     "params": [
         {"name": "D_mm", "label": "Diameter", "unit": "mm",
-         "values": [75, 100, 125, 150, 180, 200, 230, 250]},
+         "values": [75, 150, 230, 300, 380, 450, 530, 600, 690, 750, 1500]},
     ],
-    "c": [0.46, 0.35, 0.28, 0.25, 0.22, 0.21, 0.20, 0.19],
+    "c": [0.51, 0.28, 0.21, 0.18, 0.16, 0.15, 0.14, 0.13, 0.12, 0.12, 0.12],
     "notes": "Fixed r/D = 1.5. 5-gore construction.",
 }
 
-# CD3-12: Elbow, 3-Gore, Variable r/D
+# CD3-12: Elbow, 3-Gore, 90°, r/D = 0.75 to 2.0
 # C varies with radius ratio r/D. User specifies r/D.
+# Source: ASHRAE 2009 Handbook Fundamentals, p.21.27
 CD3_12 = {
     "description": "Round Elbow — 3-Gore, Variable r/D",
     "shape": "round",
@@ -78,13 +82,15 @@ CD3_12 = {
     "ref_velocity": "upstream",
     "params": [
         {"name": "r_over_D", "label": "Radius Ratio r/D", "unit": "-",
-         "values": [0.50, 0.75, 1.00, 1.50, 2.00]},
+         "values": [0.75, 1.00, 1.50, 2.00]},
     ],
-    "c": [0.71, 0.33, 0.22, 0.15, 0.13],
-    "notes": "User must supply centreline radius r and diameter D to compute r/D.",
+    "c": [0.54, 0.42, 0.34, 0.33],
+    "notes": "User must supply centreline radius r and diameter D to compute r/D. "
+             "Valid range: r/D = 0.75 to 2.0.",
 }
 
 # CD3-17: Elbow, Mitered, 45°
+# Source: ASHRAE 2009 Handbook Fundamentals, p.21.28
 CD3_17 = {
     "description": "Round Elbow — Mitered 45°",
     "shape": "round",
@@ -93,14 +99,15 @@ CD3_17 = {
     "ref_velocity": "upstream",
     "params": [
         {"name": "D_mm", "label": "Diameter", "unit": "mm",
-         "values": [75, 100, 125, 150, 180, 200, 230, 250]},
+         "values": [75, 150, 230, 300, 380, 450, 530, 600, 690, 1500]},
     ],
-    "c": [0.18, 0.15, 0.13, 0.12, 0.11, 0.11, 0.10, 0.10],
+    "c": [0.87, 0.79, 0.74, 0.72, 0.71, 0.70, 0.69, 0.68, 0.68, 0.67],
     "notes": "Fixed 45° miter angle without vanes.",
 }
 
 # CD9-1: Damper, Butterfly (Round)
 # C varies with blade angle θ (0° = fully open, 90° = fully closed).
+# Source: ASHRAE 2009 Handbook Fundamentals, p.21.28
 CD9_1 = {
     "description": "Round Damper — Butterfly",
     "shape": "round",
@@ -109,11 +116,11 @@ CD9_1 = {
     "ref_velocity": "upstream",
     "params": [
         {"name": "theta_deg", "label": "Blade Angle θ", "unit": "°",
-         "values": [0, 10, 20, 30, 40, 50, 60, 70]},
+         "values": [0, 10, 20, 30, 40, 50, 60, 70, 75, 90]},
     ],
-    "c": [0.20, 0.52, 1.54, 3.91, 10.8, 32.6, 118.0, 751.0],
-    "notes": "θ = 0° fully open; θ = 90° fully closed (infinite resistance). "
-             "Do not extrapolate beyond 70°.",
+    "c": [0.60, 0.85, 1.70, 4.0, 9.4, 24.0, 67.0, 215.0, 400.0, 9999.0],
+    "notes": "θ = 0° fully open; θ = 90° fully closed (treat as infinite resistance). "
+             "Do not extrapolate beyond 90°.",
 }
 
 # CD9-3: Fire Damper, Curtain Type C (Round) — constant C
