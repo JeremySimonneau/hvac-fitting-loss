@@ -36,9 +36,13 @@ CR3-1, CR3-6, CR3-9                   — Rectangular elbows
 CR9-1                                 — Rectangular butterfly damper
 SR4-1                                 — Rectangular transition
 SR5-1                                 — Rectangular wye (tee, diverging)
+SD4-1                                 — Round-to-round transition (supply)
+SD4-2                                 — Rectangular-to-round transition (supply)
+ER4-1                                 — Rectangular transition, two sides parallel (exhaust/return)
+ER4-3                                 — Rectangular-to-round transition (exhaust/return)
 """
 
-__version__ = "0.1.0"
+__version__ = "0.1.3"
 __author__ = "hvac_pressure contributors"
 __license__ = "MIT"
 

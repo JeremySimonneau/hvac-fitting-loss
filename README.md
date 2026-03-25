@@ -9,8 +9,8 @@ It is designed to be the calculation engine behind HVAC design tools, web apps, 
 ## Features
 
 - **Straight Ducts**: Darcy-Weisbach friction loss with Colebrook-White / Swamee-Jain approximations. Supports round, rectangular, and flat oval ducts.
-- **ASHRAE Fittings**: Built-in database of the 15 most common ASHRAE fittings (elbows, tees, transitions, dampers, entries/exits).
-- **Interpolation Engine**: Automatically performs 1D, 2D, and 3D linear interpolation on ASHRAE tables based on your exact geometry (e.g., `r/D`, `H/W`, `θ`).
+- **ASHRAE Fittings**: Built-in database of 20 ASHRAE fittings (elbows, tees, transitions, dampers, entries/exits).
+- **Interpolation Engine**: Automatically performs 1D, 2D, and 3D linear interpolation on ASHRAE tables based on your exact geometry (e.g., `r/D`, `H/W`, `θ`, `Ao/A1`).
 - **Filters & Dampers**: Square-law scaling for filters and blade-angle C-value lookups for dampers.
 - **System Chaining**: A `System` class to chain elements together and generate pressure drop reports.
 - **Unit Conversion**: Internal calculations are strictly SI (Pa, m³/s, m/s, m), with helper functions for Imperial units (CFM, in.w.g., fpm).
@@ -105,24 +105,30 @@ The library currently includes the following fitting tables:
 
 | Code | Description | Required Parameters |
 |---|---|---|
-| **CD3-1** | Round elbow, die stamped 90° | `D_mm` |
-| **CD3-5** | Round elbow, pleated 90° | `D_mm` |
-| **CD3-9** | Round elbow, 5-gore 90° | `D_mm` |
+| **CD3-1** | Round elbow, die stamped 90° | *(auto-derived from duct diameter)* |
+| **CD3-5** | Round elbow, pleated 90° | *(auto-derived from duct diameter)* |
+| **CD3-9** | Round elbow, 5-gore 90° | *(auto-derived from duct diameter)* |
 | **CD3-12** | Round elbow, 3-gore | `r_over_D` |
-| **CD3-17** | Round elbow, mitered 45° | `D_mm` |
+| **CD3-17** | Round elbow, mitered 45° | *(auto-derived from duct diameter)* |
 | **CD9-1** | Round butterfly damper | `theta_deg` |
 | **CD9-3** | Round fire damper | *(none)* |
 | **ED1-3** | Bellmouth entry (exhaust) | `r_over_D` |
 | **SD1-1** | Bellmouth entry (supply) | `r_over_Do` |
 | **ED2-1** | Conical diffuser | `A1_over_Ao`, `L_over_Do` |
-| **CR3-1** | Rectangular elbow, smooth | `r_over_W`, `H_over_W`, `theta_deg` |
-| **CR3-6** | Rectangular elbow, mitered | `theta_deg`, `H_over_W` |
+| **CR3-1** | Rectangular elbow, smooth radius | `r_over_W`, `theta_deg` *(H/W auto-derived)* |
+| **CR3-6** | Rectangular elbow, mitered | `theta_deg` *(H/W auto-derived)* |
 | **CR3-9** | Rectangular elbow, mitered w/ vanes | *(none)* |
-| **CR9-1** | Rectangular butterfly damper | `theta_deg`, `H_over_W` |
+| **CR9-1** | Rectangular butterfly damper | `theta_deg` *(H/W auto-derived)* |
 | **SR4-1** | Rectangular transition | `Ao_over_A1`, `theta_deg` |
 | **SR5-1** | Rectangular wye (tee), diverging | `As_over_Ac`, `Ab_over_Ac`, `Qb_over_Qc` |
+| **SD4-1** | Round-to-round transition (supply) | `Ao_over_A1`, `theta_deg` |
+| **SD4-2** | Rectangular-to-round transition (supply) | `Ao_over_A1`, `theta_deg` |
+| **ER4-1** | Rectangular transition, two sides parallel (exhaust/return) | `Ao_over_A1`, `theta_deg` |
+| **ER4-3** | Rectangular-to-round transition (exhaust/return) | `Ao_over_A1`, `theta_deg` |
 
 *Note: For `SR5-1` (tees), the function returns both `C` (branch loss) and `C2` (straight path loss).*
+
+*Note: `D_mm` and `H_over_W` parameters are auto-derived from the duct dimensions passed to `fitting_loss()` — you do not need to supply them explicitly.*
 
 ## API Integration
 

@@ -240,25 +240,25 @@ class TestFittingLoss:
 
     # --- Round elbows ---
 
-    def test_CD3_12_exact_table_value(self):
-        # r/D = 0.5 → C = 0.71 (exact table value)
-        result = hp.fitting_loss("CD3-12", flow_m3s=0.5, diameter_m=0.3, r_over_D=0.5)
-        assert result["C"] == pytest.approx(0.71, rel=1e-4)
+    def test_CD3_12_exact_table_value_r075(self):
+        # r/D = 0.75 → C = 0.54 (exact table value, corrected from ASHRAE PDF)
+        result = hp.fitting_loss("CD3-12", flow_m3s=0.5, diameter_m=0.3, r_over_D=0.75)
+        assert result["C"] == pytest.approx(0.54, rel=1e-4)
 
     def test_CD3_12_exact_table_value_r1(self):
-        # r/D = 1.0 → C = 0.22
+        # r/D = 1.0 → C = 0.42 (corrected from ASHRAE PDF)
         result = hp.fitting_loss("CD3-12", flow_m3s=0.5, diameter_m=0.3, r_over_D=1.0)
-        assert result["C"] == pytest.approx(0.22, rel=1e-4)
+        assert result["C"] == pytest.approx(0.42, rel=1e-4)
 
     def test_CD3_12_interpolated(self):
-        # r/D = 0.875 (between 0.75 and 1.0) → C between 0.33 and 0.22
+        # r/D = 0.875 (between 0.75 and 1.0) → C between 0.42 and 0.54
         result = hp.fitting_loss("CD3-12", flow_m3s=0.5, diameter_m=0.3, r_over_D=0.875)
-        assert 0.22 < result["C"] < 0.33
+        assert 0.42 < result["C"] < 0.54
 
-    def test_CD3_1_diameter_interpolated(self):
-        # D = 125mm → C = 0.27 (exact table value)
+    def test_CD3_1_diameter_exact(self):
+        # D = 125mm → C = 0.16 (corrected from ASHRAE PDF)
         result = hp.fitting_loss("CD3-1", flow_m3s=0.3, diameter_m=0.125, D_mm=125)
-        assert result["C"] == pytest.approx(0.27, rel=1e-3)
+        assert result["C"] == pytest.approx(0.16, rel=1e-3)
 
     def test_CD9_3_constant(self):
         # Fire damper — constant C = 0.12
@@ -266,14 +266,14 @@ class TestFittingLoss:
         assert result["C"] == pytest.approx(0.12, rel=1e-4)
 
     def test_CD9_1_fully_open(self):
-        # Butterfly damper fully open (θ=0°) → C = 0.20
+        # Butterfly damper fully open (θ=0°) → C = 0.60 (corrected from ASHRAE PDF)
         result = hp.fitting_loss("CD9-1", flow_m3s=0.5, diameter_m=0.3, theta_deg=0)
-        assert result["C"] == pytest.approx(0.20, rel=1e-3)
+        assert result["C"] == pytest.approx(0.60, rel=1e-3)
 
     def test_CD9_1_30deg(self):
-        # θ=30° → C = 3.91
+        # θ=30° → C = 4.0 (corrected from ASHRAE PDF)
         result = hp.fitting_loss("CD9-1", flow_m3s=0.5, diameter_m=0.3, theta_deg=30)
-        assert result["C"] == pytest.approx(3.91, rel=1e-3)
+        assert result["C"] == pytest.approx(4.0, rel=1e-3)
 
     def test_ED1_3_sharp_edge(self):
         # r/D = 0 → C = 0.50 (sharp-edged entry)
@@ -356,7 +356,102 @@ class TestFittingLoss:
         codes = hp.list_fittings()
         assert "CD3-12" in codes
         assert "SR5-1" in codes
-        assert len(codes) >= 15
+        assert len(codes) >= 20
+
+    # --- Transitions (SD4 / ER4 series) ---
+
+    def test_SD4_1_no_transition(self):
+        # Ao/A1 = 1.0, any theta → C = 0.0
+        result = hp.fitting_loss(
+            "SD4-1", flow_m3s=0.5, diameter_m=0.3,
+            Ao_over_A1=1.0, theta_deg=45
+        )
+        assert result["C"] == pytest.approx(0.0, abs=1e-6)
+
+    def test_SD4_1_exact_table_value(self):
+        # Ao/A1 = 0.50, theta = 20 → C = 0.05
+        result = hp.fitting_loss(
+            "SD4-1", flow_m3s=0.5, diameter_m=0.3,
+            Ao_over_A1=0.50, theta_deg=20
+        )
+        assert result["C"] == pytest.approx(0.05, rel=1e-3)
+
+    def test_SD4_1_expansion_table_value(self):
+        # Ao/A1 = 4.0, theta = 45 → C = 9.70
+        result = hp.fitting_loss(
+            "SD4-1", flow_m3s=0.5, diameter_m=0.3,
+            Ao_over_A1=4.0, theta_deg=45
+        )
+        assert result["C"] == pytest.approx(9.70, rel=1e-3)
+
+    def test_SD4_2_no_transition(self):
+        # Ao/A1 = 1.0, any theta → C = 0.0
+        result = hp.fitting_loss(
+            "SD4-2", flow_m3s=0.5, width_m=0.4, height_m=0.3,
+            Ao_over_A1=1.0, theta_deg=30
+        )
+        assert result["C"] == pytest.approx(0.0, abs=1e-6)
+
+    def test_SD4_2_exact_table_value(self):
+        # Ao/A1 = 0.50, theta = 20 → C = 0.06
+        result = hp.fitting_loss(
+            "SD4-2", flow_m3s=0.5, width_m=0.4, height_m=0.3,
+            Ao_over_A1=0.50, theta_deg=20
+        )
+        assert result["C"] == pytest.approx(0.06, rel=1e-3)
+
+    def test_ER4_1_no_transition(self):
+        # Ao/A1 = 1.0, any theta → C = 0.0
+        result = hp.fitting_loss(
+            "ER4-1", flow_m3s=0.5, width_m=0.4, height_m=0.3,
+            Ao_over_A1=1.0, theta_deg=45
+        )
+        assert result["C"] == pytest.approx(0.0, abs=1e-6)
+
+    def test_ER4_1_exact_table_value(self):
+        # Ao/A1 = 0.25, theta = 45 → C = 0.60
+        result = hp.fitting_loss(
+            "ER4-1", flow_m3s=0.5, width_m=0.4, height_m=0.3,
+            Ao_over_A1=0.25, theta_deg=45
+        )
+        assert result["C"] == pytest.approx(0.60, rel=1e-3)
+
+    def test_ER4_1_expansion_table_value(self):
+        # Ao/A1 = 4.0, theta = 60 → C = 1.09
+        result = hp.fitting_loss(
+            "ER4-1", flow_m3s=0.5, width_m=0.4, height_m=0.3,
+            Ao_over_A1=4.0, theta_deg=60
+        )
+        assert result["C"] == pytest.approx(1.09, rel=1e-3)
+
+    def test_ER4_3_no_transition(self):
+        # Ao/A1 = 1.0, any theta → C = 0.0
+        result = hp.fitting_loss(
+            "ER4-3", flow_m3s=0.5, width_m=0.4, height_m=0.3,
+            Ao_over_A1=1.0, theta_deg=30
+        )
+        assert result["C"] == pytest.approx(0.0, abs=1e-6)
+
+    def test_ER4_3_exact_table_value(self):
+        # Ao/A1 = 0.25, theta = 45 → C = 0.58
+        result = hp.fitting_loss(
+            "ER4-3", flow_m3s=0.5, width_m=0.4, height_m=0.3,
+            Ao_over_A1=0.25, theta_deg=45
+        )
+        assert result["C"] == pytest.approx(0.58, rel=1e-3)
+
+    def test_ER4_3_expansion_table_value(self):
+        # Ao/A1 = 4.0, theta = 60 → C = 1.09
+        result = hp.fitting_loss(
+            "ER4-3", flow_m3s=0.5, width_m=0.4, height_m=0.3,
+            Ao_over_A1=4.0, theta_deg=60
+        )
+        assert result["C"] == pytest.approx(1.09, rel=1e-3)
+
+    def test_new_fittings_in_registry(self):
+        codes = hp.list_fittings()
+        for code in ["SD4-1", "SD4-2", "ER4-1", "ER4-3"]:
+            assert code in codes, f"{code} missing from registry"
 
 
 # =============================================================================
